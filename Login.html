@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CRUD FIREBASE</title>
+
+    <!--=============================================ICONO WEB==================================================-->
+    <link rel="icon" type="image/png" href="images/icons/favicon.ico" />
+    <!--==============================================BOOTSTRAP ================================================-->
+    <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+    <!--=============================================ICONOGRAFIA==================================================-->
+    <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!--==============================================ANIMACION=================================================-->
+    <link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+    <!--==============================================LIBRERIA PARA EFECTOS=================================================-->
+    <link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+    <!--===============================================UTILIDAD================================================-->
+    <link rel="stylesheet" type="text/css" href="css/util.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <!--===============================================================================================-->
+
+
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+
+</head>
+
+<body>
+    <div class="limiter">
+        <div class="container-login100">
+            <div id="contenedorDatos" class="wrap-login100">
+                <div class="login100-pic js-tilt" data-tilt>
+                    <img src="images/img-01.png" alt="IMG">
+                </div>
+                <label id="alerta" name="alerta"></label>
+                <div class="login100-form validate-form">
+                    <span class="login100-form-title">
+                        Login
+                    </span>
+
+                    <div class="wrap-input100 validate-input" data-validate="Email es requerido: formato de ejemplo ex@abc.xyz">
+                        <input class="input100" type="text" id="email" name="email" placeholder="Email">
+                        <span class="focus-input100"></span>
+                        <span class="symbol-input100">
+                            <i class="fa fa-envelope" aria-hidden="true"></i>
+                        </span>
+                    </div>
+
+                    <div class="wrap-input100 validate-input" data-validate="Contraseña es requerida">
+                        <input class="input100" type="password" id="pass" name="pass" placeholder="Password">
+                        <span class="focus-input100"></span>
+                        <span class="symbol-input100">
+                            <i class="fa fa-lock" aria-hidden="true"></i>
+                        </span>
+                    </div>
+
+                    <div class="container-login100-form-btn">
+                        <button onclick="iniciarSesion()" class="login100-form-btn">
+                            Iniciar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!--=======================================SCRIPT========================================================-->
+    <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="vendor/bootstrap/js/popper.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="vendor/select2/select2.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="vendor/tilt/tilt.jquery.min.js"></script>
+    <script>
+        $('.js-tilt').tilt({
+            scale: 1.1
+        })
+    </script>
+    <!--===============================================================================================-->
+    <script src="js/main.js"></script>
+
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.5.1/firebase-app.js"></script>
+
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/7.5.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.5.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.5.1/firebase-database.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/ui/live/0.4/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/live/0.4/firebase-ui-auth.css" />
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <!--      <script src="https://www.gstatic.com/firebasejs/7.5.1/firebase-app.js"></script>
+ -->
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+         https://firebase.google.com/docs/web/setup#available-libraries -->
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyBT94TPwrkGTy2rwq-KAndcPS5aztQi2O0",
+            authDomain: "sevahacerlacarnita-f178c.firebaseapp.com",
+            databaseURL: "https://sevahacerlacarnita-f178c.firebaseio.com",
+            projectId: "sevahacerlacarnita-f178c",
+            storageBucket: "sevahacerlacarnita-f178c.appspot.com",
+            messagingSenderId: "110988588437",
+            appId: "1:110988588437:web:8439dde318d89e50a4f29c"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        /**********************\
+        * Check login status *
+       \**********************/
+        firebase.auth().onAuthStateChanged(function (user) {
+            if (user) {
+
+                alert('Estas Logueado ' + user.email);
+                window.location.href = "/crud/index.html";
+            }
+
+        });
+        /*******************\
+         * init Login UI *
+        \*******************/
+        // FirebaseUI config.
+        var uiConfig = {
+            'signInSuccessUrl': false,
+            'signInOptions': [
+                // comment unused sign-in method
+                firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+                //firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+                //firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+                //firebase.auth.GithubAuthProvider.PROVIDER_ID,
+                firebase.auth.EmailAuthProvider.PROVIDER_ID
+            ],
+            // Terms of service url.
+            'tosUrl': false,
+        };
+
+        function iniciarSesion() {
+            var email = $('#email').val();
+            var pass = $('#pass').val();
+            var error = 0;
+            var resp = firebase.auth().signInWithEmailAndPassword(email, pass).catch(function (error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // ...
+            });
+
+        }
+
+        function cerrarSesion() {
+            firebase.auth.iniciarSesion(close);
+        }
+
+    </script>
+
+</body>
+
+</html>
