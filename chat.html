@@ -4,9 +4,168 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="chat.css">
     <title>Chat</title>
+
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
+
+    <!-- estilo chat -->
+    <link href="css/chat.css" rel="stylesheet" id="bootstrap-css">
+
+    <script>
+        try{Typekit.load({ async: true });}catch(e){}
+        </script>
+        
+        <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'><link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
+        
 </head>
 <body>
     
+
+    <div class="chat_window">
+        <div class="top_menu">
+            <div class="buttons">
+                <div class="button close"></div>
+                <div class="button minimize"></div>
+                <div class="button maximize"></div>
+            </div>
+            <div class="title">Chat</div>
+        <div class="messages" id="chatBox">
+        <ul >
+
+        </ul>
+        </div>
+        <div class="bottom_wrapper clearfix">
+            <div class="message_input_wrapper">
+                <input type= "text" class="message_input" placeholder="Type your message here..." />
+            </div>
+            <div class="send_message">
+                
+                <div class="icon"></div>
+                <div class="submit">Send</div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+    <script>
+
+        $(".messages").animate({ scrollTop: $(document).height() }, "fast");
+        var user_id;
+      
+        function nuevoMensj() {
+          
+          message = $(".bottom_wrapper input").val();
+          if($.trim(message) == '') {
+            return false;
+          }
+          EnviaMensj(message);
+        };
+      
+        $('.submit').click(function() {
+          nuevoMensj();
+        });
+      
+        $(window).on('keydown', function(e) {
+      
+          if (e.which == 13) {
+            nuevoMensj();
+            return false;
+          }
+        });
+      </script>
+      
+      <!-- Firebase -->
+      <!-- The core Firebase JS SDK is always required and must be listed first -->
+      <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-app.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-auth.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-database.js"></script>
+      
+      <!-- TODO: Add SDKs for Firebase products that you want to use
+           https://firebase.google.com/docs/web/setup#available-libraries -->
+      <!-- <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-analytics.js"></script> -->
+      
+      <script>
+        // Your web app's Firebase configuration
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+          apiKey: "AIzaSyBGOhGZqhG4IcoNVbT46a4rzGrd-Wd-lRM",
+          authDomain: "chatwebz.firebaseapp.com",
+          databaseURL: "https://chatwebz.firebaseio.com",
+          projectId: "chatwebz",
+          storageBucket: "chatwebz.appspot.com",
+          messagingSenderId: "279054577385",
+          appId: "1:279054577385:web:43b15716871ccc5d588a78",
+          measurementId: "G-EKB7845F3R"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        //firebase.analytics();
+      
+      
+      
+        //var user = firebase.auth().signInAnonymously();
+       
+      
+          firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+              // User is signed in.
+              //var isAnonymous = user.isAnonymous;
+              user_id = user.email;
+            } else {
+              // User is signed out.
+            }
+          });
+      
+        // get firebase database reference...
+        var db_ref = firebase.database().ref('/mensajes');
+      
+        db_ref.on('child_added', function (data) {
+          var type;
+          if(data.val().correo == user_id){
+            type="sent";
+          }
+          else{
+            type="replies";
+          }
+          $('<li class="'+type+'"><p>' + data.val().fecha + data.val().message +  '</p></li>').appendTo($('.messages ul'));
+          //$('<li class="'+type+'"><p>' + data.val().fecha + '</p></li>').appendTo($('.messages ul'));
+          $('.bottom_wrapper input').val(null);
+          $('.contact.active .preview').html('<span>You: </span>' + data.val().message);
+      
+            $(".messages").animate({ scrollTop: $(".messages")[0].scrollHeight }, 0);
+        });
+      
+        function EnviaMensj(message) {
+          var formatofecha= new Date(); 
+                 var d= formatofecha.getUTCDate();
+                 var m= formatofecha.getMonth()+1;
+                 var y= formatofecha.getFullYear();
+                 var h=formatofecha.getHours();
+                 var min= formatofecha.getMinutes();
+                 
+                 Fecha= d+"/"+m+"/"+y+" "+h+":"+min;
+            db_ref.push({
+                correo: user_id,
+                message: message,
+                fecha  : Fecha
+            });
+        }
+        
+      
+      </script>
+   
+
+
+
 </body>
 </html>
